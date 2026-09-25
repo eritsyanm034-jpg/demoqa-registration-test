@@ -60,13 +60,6 @@ public class RegistrationTest {
         // Нажать кнопку Отправить
         $("[id='submit']").click();
 
-
-
-
-
-
-
-
         // Проверяем, что поля содержат введённые значения
         $("[id='firstName']").shouldHave(value("Mariam"));
         $("[id='lastName']").shouldHave(value("Petrova"));
@@ -79,12 +72,69 @@ public class RegistrationTest {
         $("[id='currentAddress']").shouldHave(value("10 Test Street"));
         $("[id='state']").shouldHave(text("NCR"));
         $("[id='city']").shouldHave(text("Delhi"));
+    }
+    @Test
 
+    void shouldRejectInvalidEmail() {
+        // Открываем страницу с формой
+        open("https://demoqa.com/automation-practice-form");
 
+        // Вводим имя
+        $("[id=firstName]").setValue("Mariam");
 
+        // Вводим фамилию
+        $("[id=lastName]").setValue("Petrova");
 
+        // Выбираем пол Female
+        $("label[for='gender-radio-2']").click();
 
+        // Вводим телефон 10 цифр
+        $("[id=userNumber]").setValue("9999999999");
 
+        // Загружаем фото
+        $("[id=uploadPicture]").uploadFromClasspath("photo.png");
+
+        // Вводим неправильный email
+        $("[id=userEmail]").setValue("mariam.petrova.example.com");
+
+        // Нажать кнопку Отправить
+        $("[id='submit']").scrollIntoCenter().click();
+
+        // Проверяем, что поля содержат введённые значения
+        $("[id='firstName']").shouldHave(value("Mariam"));
+        $("[id='lastName']").shouldHave(value("Petrova"));
+        $("[id='userNumber']").shouldHave(value("9999999999"));
+        $("[id='uploadPicture']").shouldHave(partialValue("photo.png"));
+        $("[id='userEmail']:invalid").shouldBe(visible);
+        $(".modal-dialog").shouldNotBe(visible);
+    }
+    @Test
+    void shouldRejectInvalidlastName() {
+        // Открываем страницу с формой
+        open("https://demoqa.com/automation-practice-form");
+        // Вводим имя
+        $("[id=firstName]").setValue("Mariam");
+        // Вводим email
+        $("[id=userEmail]").setValue("mariam.petrova@example.com");
+        // Вводим телефон 10 цифр
+        $("[id=userNumber]").setValue("9999999999");
+        // Выбираем пол Female
+        $("label[for='gender-radio-2']").click();
+        // Загружаем фото
+        $("[id=uploadPicture]").uploadFromClasspath("photo.png");
+        // Нажать кнопку Отправить
+        $("[id='submit']").scrollIntoCenter().click();
+
+        // Проверяем, что поля содержат введённые значения
+        $("[id='firstName']").shouldHave(value("Mariam"));
+        $("[id='userNumber']").shouldHave(value("9999999999"));
+        $("[id='uploadPicture']").shouldHave(partialValue("photo.png"));
+        $("[id='userEmail']").shouldHave(value("mariam.petrova@example.com"));
+        $("[id='userForm']").shouldHave(cssClass("was-validated"));
+        $("[id='lastName']").shouldHave(exactValue(""));
+        $("[id='lastName']:invalid").shouldBe(visible);
+        $(".modal-dialog").shouldNotBe(visible);
 
     }
+
 }
